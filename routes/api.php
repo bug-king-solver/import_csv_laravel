@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployeeImportController;
+use App\Http\Controllers\EmployeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::controller(EmployeeImportController::class)->prefix('employee')->group(function () {
+Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
     Route::post('/', 'import');
+    Route::get('/', 'index');
 });
