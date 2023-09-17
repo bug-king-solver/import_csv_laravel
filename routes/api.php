@@ -22,4 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
     Route::post('/', 'import');
     Route::get('/', 'index');
+    Route::get('/{id}', 'show');
+    Route::delete('/{id}', 'destroy');
 });
