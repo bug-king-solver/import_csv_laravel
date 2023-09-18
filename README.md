@@ -20,3 +20,9 @@ I used Job Queue to import large dataset from csv file and it is because it woul
 To use job queue, I need to validate the correct file and column names as well as the correct data type of each cells.
 
 After passing all the validation, the file is sent to the job queue and return success response.
+
+And also I think your import.csv file doesn't have valid data tyeps for each column, so I used another test.csv file instead of it.
+
+I hope this works well.
+
+Thank you.
