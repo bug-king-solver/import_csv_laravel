@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Jobs\EmployeeCSVData;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\UploadedFile;
+use Maatwebsite\Excel\HeadingRowImport;
+
 use App\Models\Employee;
 
 class EmployeeController extends Controller
@@ -37,6 +37,19 @@ class EmployeeController extends Controller
         return response()->json(['message' => 'Employee deleted'], 200);
     }
 
+    private function validateExcelFileStructure(UploadedFile $file): string
+    {
+        $headings = (new HeadingRowImport)->toArray($file);
+        $columnHeaders = isset($headings[0][0]) ?
+            array_filter($headings[0][0], fn($heading) => is_string($heading)) : [];
+        return match(true)
+        {
+            count($headings) > 1 => __('There are more than 1 sheets in file, Please remove the other sheets except the first one!'),
+            !count($columnHeaders) => __('There are no headers in the first row.'),
+            default => ''
+        };
+    }
+    
     /**
      * Write code on Method
      *
@@ -44,11 +57,9 @@ class EmployeeController extends Controller
      */
     public function import(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'file' => 'required|file|mimes:csv,txt',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+        $validationError = $this->validateExcelFileStructure($request->file);
+        if(!empty($validationError)) {
+            return response()->json(["error", $validationError]);
         }
 
         // Store the uploaded file in a temporary location
